@@ -212,5 +212,5 @@ def run_chatbot(confluence_spaces: List[str], file_name: str):
 
 
 # ------------------- App -------------------- #
-run_chatbot(confluence_spaces, file_name)
-# write_csv(confluence_spaces, file_name)
+# run_chatbot(confluence_spaces, file_name)
+write_csv(confluence_spaces, file_name)

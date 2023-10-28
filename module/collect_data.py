@@ -12,7 +12,7 @@ from math import ceil
 
 
 # ------------------ Config ------------------ #
-confluence_url = 'https://simplicity-networks-sandbox-516.atlassian.net/'
+confluence_url = os.environ.get('CONFLUENCE_URL')
 confluence_username = os.environ.get('CONFLUENCE_USERNAME')
 confluence_api_token = os.environ.get('CONFLUENCE_API_TOKEN')
 
