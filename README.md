@@ -65,7 +65,8 @@ Now you're ready to import your data from Confluence. Start the app with the ACT
 
 ```cmd
 docker run -it --rm -v $(pwd):/app -e ACTION=collect-data confluence-chatbot
-
+```
+```cmd
 # output
 Load information from the Confluence space TST ...
 44 pages loaded -> split into 47 pages
