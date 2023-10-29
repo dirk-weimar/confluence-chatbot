@@ -212,5 +212,13 @@ def run_chatbot(confluence_spaces: List[str], file_name: str):
 
 
 # ------------------- App -------------------- #
+# write_csv(confluence_spaces, file_name)
 # run_chatbot(confluence_spaces, file_name)
-write_csv(confluence_spaces, file_name)
+
+if __name__ == "__main__":
+    action = os.environ.get("ACTION")
+
+    if action == "collect-data":
+        write_csv(confluence_spaces, file_name)
+    elif action == "start-chatbot":
+        run_chatbot(confluence_spaces, file_name)

@@ -9,6 +9,7 @@ from atlassian import Confluence
 from bs4 import BeautifulSoup
 from typing import List
 from math import ceil
+from io import StringIO
 
 
 # ------------------ Config ------------------ #
@@ -76,7 +77,8 @@ def split_table(table_df):
 def replace_table(match: re.Match):
 
     table_html      = match.group(0)
-    pandas_tables   = pd.read_html(table_html)
+    table_html_io   = StringIO(table_html)
+    pandas_tables   = pd.read_html(table_html_io)
     table_df        = pandas_tables[0]
 
     table_text      = ''
@@ -298,7 +300,6 @@ def write_csv(confluence_spaces: list, file_name: str) -> pd.DataFrame:
         confluence_pages = split_large_pages(confluence_pages)
         print('-> aufgeteilt in ' + str(len(confluence_pages)) + ' Seiten')
 
-        # To Do: Umwandeln in DataFrame nötig?
         # Turn into data frame for easier processing
         pages_df = pd.DataFrame(confluence_pages, columns = ['space', 'title', 'page_content', 'link', 'num_tokens'])
 
