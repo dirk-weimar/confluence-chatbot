@@ -69,7 +69,8 @@ def split_table(table_df):
 
     # Add header to each chunk
     for chunk in chunks:
-        result_df = pd.concat([pd.DataFrame(columns = header), chunk], ignore_index = True)
+        chunk_filtered = chunk.dropna(axis = 1, how = 'all')
+        result_df = pd.concat([pd.DataFrame(columns = header), chunk_filtered], ignore_index = True)
         result_dfs.append(result_df)
 
     return result_dfs

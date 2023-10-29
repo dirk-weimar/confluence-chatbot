@@ -13,7 +13,7 @@ openai.api_key      = os.environ.get('OPENAI_API_KEY')
 completion_model    = 'gpt-3.5-turbo'
 
 file_name           = 'data/pages_data'
-confluence_spaces   = ['SYS'] # ['DIP', 'SEL', 'SYS', 'IG', 'ITS']
+confluence_spaces   = ['ABC', 'DEF'] # Your confluence space key(s)
 
 # Config messages
 # With gpt-3.5-turbo, we can put 4096 tokens into a message
