@@ -46,19 +46,19 @@ ENV ACTION 'start-chatbot'
 CMD ["python", "app.py"]
 ```
 
-**3. Configuration**
-Populate the environment variables in the Dockerfile you just created with your real connection data for Confluence and OpenAI.
-In the app.py file, set the range keys of the Confluence spaces you want to use. You can specify one or more spaces.
-```cmd
-confluence_spaces = ['TST', 'SYS']
- ```
-
-**4. Building the app**
+**3. Build the app**
 Change to the root directory and build the app locally using Docker.
 cd confluence-chatbot
 ```cmd
 docker build -t confluence-chatbot .
 ```
+
+**4. Configuration**
+Populate the environment variables in the Dockerfile you just created with your real connection data for Confluence and OpenAI.
+In the app.py file, set the range keys of the Confluence spaces you want to use. You can specify one or more spaces.
+```cmd
+confluence_spaces = ['TST', 'SYS']
+ ```
 
 # Running the App
 Now you're ready to import your data from Confluence. Start the app with the ACTION "collect-data":
