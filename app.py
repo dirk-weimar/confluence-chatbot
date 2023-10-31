@@ -13,7 +13,7 @@ openai.api_key      = os.environ.get('OPENAI_API_KEY')
 completion_model    = 'gpt-3.5-turbo'
 
 file_name           = 'data/pages_data'
-confluence_spaces   = ['ABC', 'DEF'] # Your confluence space key(s)
+confluence_spaces   = ['SYS'] # Your confluence space key(s)
 
 # Config messages
 # With gpt-3.5-turbo, we can put 4096 tokens into a message
@@ -37,7 +37,7 @@ Wenn die Anwort darin nicht enthalten ist, antworte "Ich weiß es nicht." Du kan
 context_message = 'Informationen und Anleitungen aus dem Wiki: \n'
 
 # Change to commented values to activate memory of previous question & answer
-max_tokens_per_context = 3490   # 1700
+max_tokens_per_context = 3390   # 1700
 max_messages_to_keep = 3        # 6
 
 

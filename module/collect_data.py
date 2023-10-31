@@ -18,10 +18,10 @@ confluence_username = os.environ.get('CONFLUENCE_USERNAME')
 confluence_api_token = os.environ.get('CONFLUENCE_API_TOKEN')
 
 # Config for splitting large pages
-max_tokens_per_page = 1200
+max_tokens_per_page = 500
 max_characters_per_page = max_tokens_per_page * 3.3     # One word consists of 3.3 tokens on average
 min_characters_per_page = max_characters_per_page / 3
-max_rows_per_table = 30
+max_rows_per_table = 20
 marker = '\n##'
 
 
@@ -60,18 +60,12 @@ def split_table(table_df):
 
     result_dfs = []
 
-    # Extract header
-    header = table_df.head(1).columns
-
     # Split into chunks
     runs = ceil(len(table_df) / max_rows_per_table)
-    chunks = [table_df[i:i + max_rows_per_table] for i in range(0, len(table_df), max_rows_per_table)]
 
-    # Add header to each chunk
-    for chunk in chunks:
-        chunk_filtered = chunk.dropna(axis = 1, how = 'all')
-        result_df = pd.concat([pd.DataFrame(columns = header), chunk_filtered], ignore_index = True)
-        result_dfs.append(result_df)
+    for i in range(0, len(table_df), max_rows_per_table):
+        chunk = table_df[i:i + max_rows_per_table]
+        result_dfs.append(chunk)
 
     return result_dfs
 
@@ -79,9 +73,8 @@ def replace_table(match: re.Match):
 
     table_html      = match.group(0)
     table_html_io   = StringIO(table_html)
-    pandas_tables   = pd.read_html(table_html_io)
+    pandas_tables   = pd.read_html(table_html_io, header=0)
     table_df        = pandas_tables[0]
-
     table_text      = ''
 
     # Split big tables
@@ -91,40 +84,46 @@ def replace_table(match: re.Match):
         for table_df in table_dfs:
             # Insert markdown headline before table als marker
             # which will be used to split large pages into smaller chunks
-            table_text += '\n' +  marker + ' Tabelle:\n' + table_df.to_markdown(tablefmt = "jira", index = False)
+            table_text += '\n' +  marker + table_df.to_markdown(tablefmt = "jira", index = False)
 
     else:
         table_text += marker + ' Tabelle:\n' + table_df.to_markdown(tablefmt = "jira", index = False)
 
     # Replace multiple blanks
-    table_text = re.sub(r' {2,}', '  ', table_text, flags = re.DOTALL)
+    table_text = re.sub(r' {2,}', ' ', table_text, flags = re.DOTALL)
 
     return table_text
 
-def split_string_by_markers(input_string: str, marker: str, min_part_size: int, max_part_size: int) -> List:
+def split_string_by_markers(input_string: str, marker: str, min_chunk_size: int, max_chunk_size: int) -> List:
 
     result= []
-    current_part = ''
+    current_chunk = ''
 
     splits = input_string.split(marker)
 
     for split in splits:
 
-        if len(current_part) + len(split) + len(marker) <= max_part_size:
-            current_part += split + marker
+        # Füge Split zu aktuellem Chunk hinzu, wenn wir dadurch innerhalb der Obergrenze bleiben
+        if len(current_chunk) + len(split) + len(marker) <= max_chunk_size:
+            current_chunk += split + marker
 
+        # Obergrenze würde durch Hinzufügen des Splitz gesprengt
         else:
-            if len(current_part) >= min_part_size:
-                result.append(current_part[:-3])
-                current_part = ''
+            # Wenn vor Hinzufügen Mindestgrenze erreicht ist, beende aktuellen Chunk und
+            # starte mit neuem Chunk mit aktuellem Split darin
+            if len(current_chunk) >= min_chunk_size:
+                result.append(current_chunk[:-3])
+                current_chunk = split + marker
 
+            # Wenn du dich entscheiden musst zwischen nicht erreichter Mindestgröße
+            # und gesprengter Obergrenze, opfere im Zweifel die Obergrenze
             else:
-                current_part += split + marker
-                result.append(current_part[:-3])
-                current_part = ''
+                current_chunk += split + marker
+                result.append(current_chunk[:-3])
+                current_chunk = ''
 
-    if current_part:
-        result.append(current_part[:-3])
+    if current_chunk:
+        result.append(current_chunk[:-3])
 
     return result
 
@@ -199,12 +198,7 @@ def split_large_pages(pages: List) -> List:
 
         if page[4] > max_tokens_per_page:
 
-            # print(page[2])
-
             content_list = split_string_by_markers(page[2], marker, min_characters_per_page, max_characters_per_page)
-
-            # print()
-            # print(content_list)
 
             i = 0
 
@@ -265,7 +259,7 @@ def collect_data_from_confluence(space: str) -> list:
     for page in pages:
 
         # Debug single page html
-        # if page['id'] != '4063877':
+        # if page['id'] != '3413748':
         #     continue
 
         id      = page['id']

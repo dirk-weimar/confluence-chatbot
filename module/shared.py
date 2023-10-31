@@ -7,7 +7,7 @@ embedding_model = 'text-embedding-ada-002'
 
 
 # ------------------ Config ------------------ #
-max_tokens_response         = 300   # adjust for longer or shorter answers from the chatbot
+max_tokens_response         = 400   # adjust for longer or shorter answers from the chatbot
 tokens_system_message       = 150   # adjust if you change system message
 tokens_context_message      = 15    # adjust if you change context message
 tokens_meta_infos           = 135   # for example 'role: system' in chat messages
